@@ -1,0 +1,11 @@
+cliente_id,nome,cpf,data_nascimento,genero,email,telefone,cidade,estado,renda_mensal,score_credito,data_cadastro,status_cliente
+1,JOAO SILVA,123.456.789-00,1990-05-14,M,joao@email.com,(31) 99999-0001,Belo Horizonte,MG,5000.0,720,2020-01-10 08:00:00,ativo
+2,maria souza,98765432100,22/08/1985,Feminino,maria@email.com,31988880002,São Paulo,SP,8500.0,850,2019-06-15 10:30:00,ativo
+3,Carlos Oliveira,321.654.987-11,1978-11-30,male,carlos_invalido,(11) 97777-0003,Rio de Janeiro,RJ,-300.0,410,2021-03-22 14:00:00,bloqueado
+4,ANA LIMA,11122233344,05/03/1995,F,ana@email.com,21966660004,Curitiba,PR,12000.0,930,2018-11-05 09:15:00,ativo
+5,Pedro Costa,555.666.777-88,1988-07-19,Masculino,pedro@email.com,(41) 95555-0005,Porto Alegre,RS,3200.0,610,2022-07-01 11:45:00,inativo
+6,FERNANDA ROCHA,99988877766,1992-12-01,female,fernanda@email.com,51944440006,Salvador,BA,7600.0,780,2020-09-18 16:00:00,ativo
+7,lucas mendes,444.333.222-11,15/06/2000,M,lucas,(71) 93333-0007,Fortaleza,CE,2100.0,510,2023-02-28 08:30:00,ativo
+8,Beatriz Alves,12312312312,1975-04-22,,beatriz@email.com,85922220008,Recife,PE,15000.0,990,2017-04-10 13:00:00,ativo
+9,RODRIGO NUNES,777.888.999-00,1983-09-08,MASCULINO,rodrigo@email.com,(62) 91111-0009,Goiânia,GO,4400.0,670,2021-08-14 10:00:00,bloqueado
+10,juliana castro,00011122233,28/01/1998,F,juliana@email.com,48900000010,Florianópolis,SC,9800.0,800,2022-12-01 15:30:00,ativo

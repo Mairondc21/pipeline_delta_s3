@@ -1,0 +1,9 @@
+cartao_id,conta_id,tipo_cartao,bandeira,limite_total,limite_utilizado,data_emissao,data_validade,status_cartao,internacional
+1001,101,multiplo,visa,3000.0,1200.0,2020-01-10,2025-01-01,ativo,true
+1002,102,credito,mastercard,5000.0,4800.0,2019-06-15,2024-06-01,ativo,false
+1003,104,credito,elo,20000.0,21000.0,2018-11-05,2026-11-01,bloqueado,true
+1004,105,debito,visa,1000.0,200.0,2022-07-01,2027-07-01,ativo,True
+1005,106,multiplo,mastercard,4000.0,3950.0,2020-09-18,2025-09-01,ativo,false
+1006,107,debito,elo,1500.0,0.0,2023-02-28,2028-02-01,ativo,FALSE
+1007,108,credito,visa,50000.0,12000.0,2017-04-10,2025-04-01,ativo,true
+1008,110,multiplo,mastercard,8000.0,7500.0,2022-12-01,2027-12-01,ativo,1

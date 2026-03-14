@@ -1,0 +1,26 @@
+[project]
+name = "pipeline-delta-s3"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Mairon Costa",email = "duartemairon@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "boto3 (>=1.42.68,<2.0.0)",
+    "pandas (>=3.0.1,<4.0.0)",
+    "pyspark (==3.3.2)",
+    "python-dotenv (>=1.2.2,<2.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pyarrow (>=23.0.1,<24.0.0)",
+    "fastparquet (>=2025.12.0,<2026.0.0)"
+]
