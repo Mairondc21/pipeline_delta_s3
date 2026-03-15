@@ -10,8 +10,9 @@ requires-python = ">=3.12"
 dependencies = [
     "boto3 (>=1.42.68,<2.0.0)",
     "pandas (>=3.0.1,<4.0.0)",
-    "pyspark (==3.3.2)",
-    "python-dotenv (>=1.2.2,<2.0.0)"
+    "python-dotenv (>=1.2.2,<2.0.0)",
+    "pyspark (==4.1.1)",
+    "delta-spark (>=4.1.0,<5.0.0)"
 ]
 
 
