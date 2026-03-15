@@ -10,9 +10,9 @@ class SparkBuilder:
             cls._instance.spark = SparkSession.builder \
                 .appName("pipeline-delta-s3") \
                 .config("spark.jars.packages",
-                        "io.delta:delta-core_2.12:2.3.0,"
-                        "org.apache.hadoop:hadoop-aws:3.3.2,"
-                        "com.amazonaws:aws-java-sdk-bundle:1.11.1026") \
+                        "io.delta:delta-spark_2.13:4.1.0,"
+                        "org.apache.hadoop:hadoop-aws:3.4.1,"
+                        "com.amazonaws:aws-java-sdk-bundle:1.12.262")\
                 .config("spark.sql.extensions",
                         "io.delta.sql.DeltaSparkSessionExtension") \
                 .config("spark.sql.catalog.spark_catalog",
