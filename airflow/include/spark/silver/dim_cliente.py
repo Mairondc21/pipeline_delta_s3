@@ -86,44 +86,21 @@ if DeltaTable.isDeltaTable(spark, caminho_silver):
         on="cliente_id",
         how="left"
     ).filter(
-        # hash mudou (algo foi alterado)
         col("existente.cliente_id").isNull() |
         (col("novo.hash_registro") != col("existente.hash_registro")) 
     ).select("novo.*")
 
-    # ── 4. MERGE — coração do SCD Type 2 ──
     delta_table.alias("destino").merge(
         df_mudancas.alias("origem"),
-        # Condição de match: mesmo cliente_id E ainda está ativo
         "destino.cliente_id = origem.cliente_id AND destino.flag_atual = true"
     ) \
     .whenMatchedUpdate(values={
-        # Quando encontra e mudou → "fecha" o registro antigo
         "flag_atual":      lit(False),
         "data_alteracao":  current_timestamp()
      }).execute() \
-    # .whenNotMatchedInsert(values={
-    #     # Quando é novo → insere com flag ativo
-    #     "sk_cliente":       col("origem.sk_cliente"),
-    #     "cliente_id":       col("origem.cliente_id"),
-    #     "nome":             col("origem.nome"),
-    #     "cpf":              col("origem.cpf"),
-    #     "email":            col("origem.email"),
-    #     "telefone":         col("origem.telefone"),
-    #     "cidade":           col("origem.cidade"),
-    #     "estado":           col("origem.estado"),
-    #     "renda_mensal":     col("origem.renda_mensal"),
-    #     "score_credito":    col("origem.score_credito"),
-    #     "status_cliente":   col("origem.status_cliente"),
-    #     "data_alteracao":   lit(None).cast("timestamp"),
-    #     "flag_atual":       lit(True),
-    #     "hash_registro":    col("origem.hash_registro")
-    # }) \
-    
+  
     maxTableKey = DeltaTable.forPath(spark, caminho_silver).toDF().agg({"sk_cliente":"max"}).collect()[0][0]
 
-    # ── 5. Insere a nova versão do registro que mudou ──
-    # O MERGE só "fechou" o antigo — agora precisa inserir o novo
     df_mudancas.withColumn("flag_atual", lit(True)) \
         .withColumn("data_alteracao", lit(None).cast("timestamp")) \
         .withColumn("sk_cliente", col("sk_cliente") + maxTableKey) \
