@@ -4,6 +4,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from clients.spark_builder import SparkBuilder
+from delta.tables import DeltaTable
 from pyspark.sql.functions import col, upper
 
 spark = SparkBuilder().get_session()
@@ -25,9 +26,21 @@ if df_rejeitados.count() > 0:
         .format("delta")\
         .mode("append")\
         .save("s3a://mairon-pipeline-delta-s3-landing/bronze_quarentena/cartoes/")
+    
+caminho_bronze = "s3a://mairon-pipeline-delta-s3-landing/bronze/cartoes"
 
+if DeltaTable.isDeltaTable(spark, caminho_bronze):
+    delta_bronze = DeltaTable.forPath(spark, caminho_bronze)
 
-df_validos.write \
-    .format("delta") \
-    .mode("append") \
-    .save("s3a://mairon-pipeline-delta-s3-landing/bronze/cartoes")
+    delta_bronze.alias("destino").merge(
+        df_validos.alias("origem"),
+        "destino.cartao_id = origem.cartao_id"
+    ).whenMatchedUpdateAll()\
+    .whenNotMatchedInsertAll()\
+    .execute()
+
+else:
+    df_validos.write \
+        .format("delta") \
+        .mode("append") \
+        .save("s3a://mairon-pipeline-delta-s3-landing/bronze/cartoes")
