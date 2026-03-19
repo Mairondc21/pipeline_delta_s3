@@ -1,0 +1,30 @@
+source:
+  type: s3
+  config:
+    aws_config:
+      aws_access_key_id: "${ACCESS_KEY}"
+      aws_secret_access_key: "${SECRET_KEY}"
+      aws_region: "us-west-1"
+    path_specs:
+      # camada landing — arquivos raw (.json, .csv, .parquet)
+      - include: "s3://mairon-pipeline-delta-s3-landing/{table}"
+        table_name: "landing_{table}"
+
+      # camada bronze — arquivos delta
+      - include: "s3://mairon-pipeline-delta-s3-landing/bronze/{table}/*"
+        exclude:
+          - "s3://mairon-pipeline-delta-s3-landing/bronze/*/_delta_log/*"
+        table_name: "bronze_{table}"
+
+      # camada silver — arquivos delta
+      - include: "s3://mairon-pipeline-delta-s3-landing/silver/{table}/*"
+        exclude:
+          - "s3://mairon-pipeline-delta-s3-landing/silver/*/_delta_log/*"
+        table_name: "silver_{table}"
+
+    profiling:
+      enabled: true
+sink:
+  type: datahub-rest
+  config:
+    server: "http://datahub-gms:8080"

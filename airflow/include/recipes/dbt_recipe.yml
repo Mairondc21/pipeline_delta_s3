@@ -1,0 +1,18 @@
+source:
+  type: dbt
+  config:
+    manifest_path: "/Users/maironduartecosta/programing/pipeline_delta_s3/airflow/include/dbt_gold/target/manifest.json"
+    catalog_path: "/Users/maironduartecosta/programing/pipeline_delta_s3/airflow/include/dbt_gold/target/catalog.json"
+    run_results_paths:
+      - "/Users/maironduartecosta/programing/pipeline_delta_s3/airflow/include/dbt_gold/target/run_results.json"
+
+    target_platform: "duckdb"
+    target_platform_instance: "local"
+
+    enable_meta_mapping: true
+    strip_user_ids_from_email: true
+
+sink:
+  type: datahub-rest
+  config:
+    server: "http://datahub-gms:8080"
