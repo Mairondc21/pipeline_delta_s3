@@ -1,11 +1,13 @@
-import sys
 from pathlib import Path
+import sys
+
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from clients.spark_builder import SparkBuilder
 from delta.tables import DeltaTable
 from pyspark.sql.functions import col, upper
+
 
 spark = SparkBuilder().get_session()
 

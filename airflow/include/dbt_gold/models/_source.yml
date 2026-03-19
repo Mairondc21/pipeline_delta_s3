@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: s3_silver
+    schema: main
+    tables:
+      - name: ft_transacao
+        meta: 
+          external_location: "read_parquet('s3://mairon-pipeline-delta-s3-landing/silver/ft_transacao/*.parquet')"
+      - name: dim_cliente
+        meta: 
+          external_location: "read_parquet('s3://mairon-pipeline-delta-s3-landing/silver/dim_cliente/*.parquet')"
+      - name: dim_data
+        meta: 
+          external_location: "read_parquet('s3://mairon-pipeline-delta-s3-landing/silver/dim_data/*.parquet')"
+      - name: dim_cartao
+        meta: 
+          external_location: "read_parquet('s3://mairon-pipeline-delta-s3-landing/silver/dim_cartao/*.parquet')"

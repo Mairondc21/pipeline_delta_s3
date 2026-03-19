@@ -1,12 +1,20 @@
-import sys
 from pathlib import Path
+import sys
+
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from clients.spark_builder import SparkBuilder
-from pyspark.sql.window import Window
 from delta.tables import DeltaTable
-from pyspark.sql.functions import explode, sequence, to_date, col, row_number, when, lit, date_format
+from pyspark.sql.functions import (
+    col,
+    date_format,
+    lit,
+    row_number,
+    when,
+)
+from pyspark.sql.window import Window
+
 
 spark = SparkBuilder().get_session()
 
@@ -29,6 +37,7 @@ df = calendar_df.withColumns({
     "flag_fim_semana": when(col("dia_semana").isin(["Sat","Sun"]),lit(True)).otherwise(lit(False))
 }
 )
+df = df.dropDuplicates(["cartao_id"])
 caminho_silver = "s3a://mairon-pipeline-delta-s3-landing/silver/dim_data"
 
 if DeltaTable.isDeltaTable(spark, caminho_silver):

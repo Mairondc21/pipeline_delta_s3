@@ -1,11 +1,13 @@
-import sys
 from pathlib import Path
+import sys
+
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from clients.spark_builder import SparkBuilder
 from delta.tables import DeltaTable
 from pyspark.sql.functions import col
+
 
 spark = SparkBuilder().get_session()
 
@@ -20,7 +22,9 @@ df = df.select(
     "status_cartao",
     col("internacional").cast("boolean")
 )
+
 caminho_silver = "s3a://mairon-pipeline-delta-s3-landing/silver/dim_cartao"
+df = df.dropDuplicates(["cartao_id"])
 
 if DeltaTable.isDeltaTable(spark, caminho_silver):
     delta_bronze = DeltaTable.forPath(spark, caminho_silver)

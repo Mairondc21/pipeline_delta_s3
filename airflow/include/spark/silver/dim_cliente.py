@@ -1,5 +1,6 @@
-import sys
 from pathlib import Path
+import sys
+
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
@@ -7,8 +8,18 @@ from clients.spark_builder import SparkBuilder
 from delta.tables import DeltaTable
 from pyspark.sql import Window
 from pyspark.sql.functions import (
-    col, lit, current_timestamp, row_number, md5, concat_ws,regexp_replace, when, try_to_date, coalesce
+    coalesce,
+    col,
+    concat_ws,
+    current_timestamp,
+    lit,
+    md5,
+    regexp_replace,
+    row_number,
+    try_to_date,
+    when,
 )
+
 
 spark = SparkBuilder().get_session()
 
@@ -50,12 +61,12 @@ df = df.withColumn("genero_new", when((col("genero") == "Masculino") | (col("gen
 df_invalidos = df.where((~col("email").endswith("@email.com")) | (col("genero_new") == "N/A"))
 df_validos = df.where((col("email").endswith("@email.com")) & ( col("genero_new") != "N/A"))
 
-# if df_invalidos.count() > 0:
-#     df_invalidos\
-#     .write\
-#     .format("delta")\
-#     .mode("append")\
-#     .save("s3a://mairon-pipeline-delta-s3-landing/silver_quarentena/cliente")
+if df_invalidos.count() > 0:
+    df_invalidos\
+    .write\
+    .format("delta")\
+    .mode("append")\
+    .save("s3a://mairon-pipeline-delta-s3-landing/silver_quarentena/cliente")
 
 window_spec = Window().orderBy("cliente_id")
 
@@ -71,7 +82,6 @@ df_novos = df_validos.withColumn(
     "hash_registro",
     md5(concat_ws("|", *[col(c) for c in colunas_monitoradas]))
 )
-
 caminho_silver = "s3a://mairon-pipeline-delta-s3-landing/silver/dim_cliente"
 
 if DeltaTable.isDeltaTable(spark, caminho_silver):
@@ -94,10 +104,10 @@ if DeltaTable.isDeltaTable(spark, caminho_silver):
         df_mudancas.alias("origem"),
         "destino.cliente_id = origem.cliente_id AND destino.flag_atual = true"
     ) \
-    .whenMatchedUpdate(values={
+    .whenMatchedUpdate(set={
         "flag_atual":      lit(False),
         "data_alteracao":  current_timestamp()
-     }).execute() \
+     }).execute()
   
     maxTableKey = DeltaTable.forPath(spark, caminho_silver).toDF().agg({"sk_cliente":"max"}).collect()[0][0]
 
@@ -108,6 +118,7 @@ if DeltaTable.isDeltaTable(spark, caminho_silver):
         .format("delta") \
         .mode("append") \
         .save(caminho_silver)
+    df_mudancas.show()
 
 else:
     window_spec = Window.orderBy("cliente_id")
