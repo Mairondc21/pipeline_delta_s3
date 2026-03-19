@@ -1,0 +1,27 @@
+version: "3.1"
+services:
+  scheduler:
+    ports:
+      - "4040:4040"
+    volumes:
+      - ./.env:/usr/local/airflow/.env
+    networks:
+      - datahub_network
+
+  triggerer:
+    volumes:
+      - ./.env:/usr/local/airflow/.env
+    networks:
+      - datahub_network
+
+  postgres:
+    networks:
+      - datahub_network
+
+networks:
+  default:
+    name: datahub_network
+    external: true
+  datahub_network:
+    name: datahub_network
+    external: true
