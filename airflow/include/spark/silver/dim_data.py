@@ -37,7 +37,6 @@ df = calendar_df.withColumns({
     "flag_fim_semana": when(col("dia_semana").isin(["Sat","Sun"]),lit(True)).otherwise(lit(False))
 }
 )
-df = df.dropDuplicates(["cartao_id"])
 caminho_silver = "s3a://mairon-pipeline-delta-s3-landing/silver/dim_data"
 
 if DeltaTable.isDeltaTable(spark, caminho_silver):
