@@ -6,23 +6,26 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     strategy:
-      matrix: 
+      matrix:
         python-version: ['3.13']
     steps:
 
       - name: Baixa o repositório
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Configura Python
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{matrix.python-version}}
+          python-version: ${{ matrix.python-version }}
 
-      - name: Install deps
+      - name: Instala dependências
         run: pip install ruff sqlfluff sqlfluff-templater-dbt dbt-duckdb
 
-      - name: Lint
-        run: ruff check . && sqlfluff lint airflow/include/dbt_gold/models
+      - name: Lint Python
+        run: ruff check .
 
+      - name: Lint SQL
+        run: sqlfluff lint airflow/include/dbt_gold/models
 
       - name: dbt compile
         run: dbt compile --profiles-dir ./profiles
