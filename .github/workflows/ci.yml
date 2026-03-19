@@ -25,7 +25,13 @@ jobs:
         run: ruff check .
 
       - name: Lint SQL
-        run: sqlfluff lint airflow/include/dbt_gold/models
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: sqlfluff lint airflow/include/dbt_gold/models --profiles-dir .github/profiles
 
       - name: dbt compile
-        run: dbt compile --profiles-dir airflow/include/dbt_gold/models/profiles
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: dbt compile --project-dir airflow/include/dbt_gold --profiles-dir .github/profiles
