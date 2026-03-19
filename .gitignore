@@ -1,2 +1,6 @@
 .venv
 .env
+.venv-datahub
+.python-version
+.ruff_cache
+image/
