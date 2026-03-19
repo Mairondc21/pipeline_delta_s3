@@ -8,9 +8,11 @@ WITH cte_base AS (
 
 cte_cartao_limite AS (
     SELECT
-        bandeira,
-        limite_total,
-        RANK() OVER (PARTITION BY bandeira ORDER BY limite_total DESC) AS rn
+        bs.bandeira,
+        bs.limite_total,
+        RANK() OVER (
+            PARTITION BY bs.bandeira ORDER BY bs.limite_total DESC
+        ) AS rn
     FROM
         (
             SELECT DISTINCT
@@ -20,7 +22,7 @@ cte_cartao_limite AS (
             FROM {{ source('s3_silver', 'dim_cartao') }}
         ) AS ct
     INNER JOIN cte_base AS bs ON ct.cartao_id = bs.cartao_id
-    WHERE status_cartao = 'ATIVO'
+    WHERE ct.status_cartao = 'ATIVO'
 )
 
 SELECT *

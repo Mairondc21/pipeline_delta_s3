@@ -5,24 +5,35 @@ on: pull_request
 jobs:
   validate:
     runs-on: ubuntu-latest
+    environment: secrets
     strategy:
-      matrix: 
+      matrix:
         python-version: ['3.13']
     steps:
 
       - name: Baixa o repositório
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Configura Python
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{matrix.python-version}}
+          python-version: ${{ matrix.python-version }}
 
-      - name: Install deps
+      - name: Instala dependências
         run: pip install ruff sqlfluff sqlfluff-templater-dbt dbt-duckdb
 
-      - name: Lint
-        run: ruff check . && sqlfluff lint airflow/include/dbt_gold/models
+      - name: Lint Python
+        run: ruff check .
 
+      - name: Lint SQL
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: sqlfluff lint airflow/include/dbt_gold/models
 
       - name: dbt compile
-        run: dbt compile --profiles-dir ./profiles
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DBT_PROFILES_DIR: airflow/include/dbt_gold
+        run: dbt compile --project-dir airflow/include/dbt_gold
