@@ -1,0 +1,75 @@
+config_version: 3
+
+config_variables_file_path: uncommitted/config_variables.yml
+plugins_directory: plugins/
+
+datasources:
+  spark_datasource:
+    class_name: Datasource
+    execution_engine:
+      class_name: SparkDFExecutionEngine
+      force_reuse_spark_context: true
+    data_connectors:
+      runtime_data_connector:
+        class_name: RuntimeDataConnector
+        batch_identifiers:
+          - run_id
+
+stores:
+  expectations_S3_store:
+    class_name: ExpectationsStore
+    store_backend:
+      class_name: TupleS3StoreBackend
+      bucket: mairon-pipeline-delta-s3-landing
+      prefix: gx/expectations
+      boto3_options:
+        aws_access_key_id: ${ACCESS_KEY}
+        aws_secret_access_key: ${SECRET_KEY}
+
+  validations_store:
+    class_name: ValidationsStore
+    store_backend:
+      class_name: TupleS3StoreBackend
+      bucket: mairon-pipeline-delta-s3-landing
+      prefix: gx/validations
+      boto3_options:
+        aws_access_key_id: ${ACCESS_KEY}
+        aws_secret_access_key: ${SECRET_KEY}
+
+  evaluation_parameter_store:
+    class_name: EvaluationParameterStore
+
+  checkpoint_store:
+    class_name: CheckpointStore
+    store_backend:
+      class_name: TupleS3StoreBackend
+      bucket: mairon-pipeline-delta-s3-landing
+      prefix: gx/checkpoints
+      boto3_options:
+        aws_access_key_id: ${ACCESS_KEY}
+        aws_secret_access_key: ${SECRET_KEY}
+
+  profiler_store:
+    class_name: ProfilerStore
+    store_backend:
+      class_name: TupleFilesystemStoreBackend
+      suppress_store_backend_id: true
+      base_directory: profilers/
+
+expectations_store_name: expectations_S3_store
+validations_store_name: validations_store
+evaluation_parameter_store_name: evaluation_parameter_store
+checkpoint_store_name: checkpoint_store
+
+data_docs_sites:
+  local_site:
+    class_name: SiteBuilder
+    show_how_to_buttons: true
+    store_backend:
+      class_name: TupleFilesystemStoreBackend
+      base_directory: uncommitted/data_docs/local_site/
+    site_index_builder:
+      class_name: DefaultSiteIndexBuilder
+
+anonymous_usage_statistics:
+  enabled: True
