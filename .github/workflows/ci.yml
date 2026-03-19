@@ -28,4 +28,4 @@ jobs:
         run: sqlfluff lint airflow/include/dbt_gold/models
 
       - name: dbt compile
-        run: dbt compile --profiles-dir ./profiles
+        run: dbt compile --profiles-dir airflow/include/dbt_gold/models/profiles
