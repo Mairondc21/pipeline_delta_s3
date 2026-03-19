@@ -4,12 +4,6 @@ from airflow import DAG
 from airflow.providers.standard.operators.bash import BashOperator
 from airflow.models.baseoperator import chain
 
-
-# ============================================================
-# CONFIGURAÇÕES
-# ============================================================
-
-
 PROJECT_ROOT = "/usr/local/airflow"
 SPARK_SCRIPT  = f"{PROJECT_ROOT}/include/spark"
 GE_PATH = f"{PROJECT_ROOT}/tests/gx"
@@ -23,10 +17,6 @@ default_args = {
     "email_on_failure": False,
 }
 
-# ============================================================
-# DAG
-# ============================================================
-
 
 with DAG(
     dag_id="pipeline_delta_s3",
@@ -37,9 +27,6 @@ with DAG(
     tags=["pyspark", "delta", "s3", "great_expectations"],
 ) as dag:
 
-    # ----------------------------------------------------------
-    # UPLOAD S3 — boto3
-    # ----------------------------------------------------------
     upload_to_s3 = BashOperator(
         task_id="upload_to_s3",
         bash_command=f"python {PROJECT_ROOT}/include/s3/ingestion_s3.py",
@@ -104,9 +91,7 @@ with DAG(
             )
             [silver_cartoes, silver_clientes, silver_contas,silver_data] >> silver_transacoes
         bronze_group >> silver_group
-    # ----------------------------------------------------------
-    # GREAT EXPECTATIONS — validação silver → gold
-    # ----------------------------------------------------------
+
     with TaskGroup(
             "quality",
             tooltip="Great Expectations — validação Silver → Gold"
@@ -119,9 +104,6 @@ with DAG(
             ),
         )
 
-    # ----------------------------------------------------------
-    # DBT — placeholder (implementar após configurar dbt+DuckDB)
-    # ----------------------------------------------------------
     with TaskGroup(
         "Gold",
         tooltip="Processamento camada Gold",
@@ -135,19 +117,19 @@ with DAG(
                 ),
         )
     with TaskGroup(
-        "spark",
+        "datahub",
         tooltip="Processamento Spark",
         default_args={"retries": 1}
     ) as datahub_group:
         datahub_ingest_s3 = BashOperator(
-            task_id="datahub_ingest",
+            task_id="datahub_ingest_s3",
             bash_command="""
             source /usr/local/airflow/dt_venv/bin/activate && \
             datahub ingest -c /usr/local/airflow/include/recipes/s3_recipe.yml
             """
         )
         datahub_ingest_dbt = BashOperator(
-            task_id="datahub_ingest",
+            task_id="datahub_ingest_dbt",
             bash_command="""
             source /usr/local/airflow/dt_venv/bin/activate && \
             datahub ingest -c /usr/local/airflow/include/recipes/dbt_recipe.yml
