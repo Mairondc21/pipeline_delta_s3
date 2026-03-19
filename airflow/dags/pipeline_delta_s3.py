@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
-from airflow.utils.task_group import TaskGroup
+
 from airflow import DAG
-from airflow.providers.standard.operators.bash import BashOperator
 from airflow.models.baseoperator import chain
+from airflow.providers.standard.operators.bash import BashOperator
+from airflow.utils.task_group import TaskGroup
+
 
 PROJECT_ROOT = "/usr/local/airflow"
 SPARK_SCRIPT  = f"{PROJECT_ROOT}/include/spark"
@@ -97,10 +99,10 @@ with DAG(
             tooltip="Great Expectations — validação Silver → Gold"
         ) as quality_group:
         ge_task = BashOperator(
-            task_id=f"gx_validate_pipeline",
+            task_id="gx_validate_pipeline",
             bash_command=(
-                f"cd {GE_PATH} && "
-                f"python checkpoints/pipeline_checkpoint.py"
+                """cd {GE_PATH} && 
+                python checkpoints/pipeline_checkpoint.py"""
             ),
         )
 
