@@ -29,7 +29,9 @@
     
 
 import os
+
 from pyspark.sql import SparkSession
+
 
 JARS_PATH = "/usr/local/airflow/jars"
 
